@@ -46,6 +46,12 @@ def xy_train(dataset=None):
     X_train, y_train, _ , _ = train_test_split(X,y,test_size = 0.2, random_state=42, stratify = y)
     return X_train, y_train
 
+def xy_train_test(dataset = None):
+    if dataset is None:
+        dataset = data_original()
+    X, y = dataset.drop('infected', axis=1), dataset['infected']
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, random_state=42, stratify = y)
+    return X_train, X_test, y_train, y_test
 
 
 
