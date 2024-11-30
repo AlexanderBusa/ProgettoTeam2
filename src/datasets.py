@@ -48,7 +48,8 @@ def xy_train(dataset=None, scale = True):
 
     if scale:
         scaler = StandardScaler()
-        X_train = scaler.fit_transform(X_train)  
+        X_train_scaled = scaler.fit_transform(X_train)  
+        X_train = pd.DataFrame(X_train_scaled, columns=X.columns)
 
     return X_train, y_train
 
@@ -60,8 +61,11 @@ def xy_train_test(dataset = None, scale = True):
 
     if scale:
         scaler = StandardScaler()
-        X_train = scaler.fit_transform(X_train)  
-        X_test = scaler.transform(X_test) 
+        X_train_scaled = scaler.fit_transform(X_train)  
+        X_test_scaled = scaler.transform(X_test) 
+        X_train = pd.DataFrame(X_train_scaled, columns=X.columns)
+        X_test = pd.DataFrame(X_test_scaled, columns=X.columns)
+
 
     return X_train, X_test, y_train, y_test
 
