@@ -70,5 +70,3 @@ def xy_train_test(dataset = None, scale = True):
     return X_train, X_test, y_train, y_test
 
 
-
-
