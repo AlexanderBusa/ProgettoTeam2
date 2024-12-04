@@ -18,6 +18,8 @@ from sklearn.linear_model import LogisticRegression
 from matplotlib_venn import venn2
 from tqdm import tqdm
 
+from . import datasets
+
 
 
 def validation_accuracy_score(Xtrain,ytrain,model, n_splits = 5):
@@ -93,4 +95,10 @@ def skb_evaluation_cv(dataset = None, max_k= None, n_splits = 5):
         score = validation_accuracy_score(X[skb_features],y,model,n_splits = n_splits)
         results_skb.append({"k": k, "score": round(score,4), "features":list(skb_features)})
     return pd.DataFrame(results_skb).set_index('k')
+
+def skb_select_features(X, y, k):
+    skb = SelectKBest(score_func=f_classif, k = k)
+    skb = skb.fit(X, y)
+    selected_features = X.columns[skb.get_support(indices=True)]
+    return selected_features
 
