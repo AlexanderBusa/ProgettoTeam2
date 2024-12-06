@@ -44,7 +44,7 @@ def cv_mean_scores(Xtrain, ytrain, model = LogisticRegression(random_state=42), 
 
     my_scores= {
         "accuracy": "accuracy",
-        "recall": recall_score,
+        "recall": "recall",
         "selectivity": selectivity_score
     }
 
@@ -55,7 +55,7 @@ def cv_mean_scores(Xtrain, ytrain, model = LogisticRegression(random_state=42), 
 
 
     # Calculate the mean of each score
-    mean_scores =  {score : cv_results[score].mean() for score in my_scores}
+    mean_scores =  {score : cv_results["test_"+score].mean() for score in my_scores}
     return mean_scores
 
 
