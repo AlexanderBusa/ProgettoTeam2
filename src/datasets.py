@@ -49,15 +49,15 @@ def data_time730(df = data_original(), drop_censored = False):
     """
 
     if "time" not in df.columns:
-      print("Warning: the data does not have a feature 'time' to be replaced with time730.")
-      return df
+        print("Warning: the data does not have a feature 'time' to be replaced with time730.")
+        return df
 
     # this shifted ReLU does the job:
     df["time730"] = np.maximum(0, df['time'] - 730)
 
     # censored patients: they quit the study before 2 years
     if not drop_censored:
-      df["time_censored"] = np.maximum(0,730 - df['time'])
+        df["time_censored"] = np.maximum(0,730 - df['time'])
 
     df= df.drop(columns = ['time'])
     return df
