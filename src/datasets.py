@@ -41,7 +41,7 @@ def data_balanced():
     data = data_original()
     return _sample_balance_df(data)
 
-def data_time730(dataset = data_original(), drop_censored = False):
+def data_time730(df = data_original(), drop_censored = False):
     """ 
     replaces feature "time" with 
     - time730: counts the days over the 2 years time target 
