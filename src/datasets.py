@@ -7,7 +7,7 @@ from sklearn.preprocessing import StandardScaler
 import pandas as pd
 #import matplotlib.pyplot as plt
 #import seaborn as sns
-#import numpy as np
+import numpy as np
 
 def data_original():
     data = pd.read_csv('./data/AIDS_Classification.csv')
@@ -36,9 +36,31 @@ def _sample_balance_df(dataset, with_reindex = False, seed = 42):
         df_balanced = df_balanced.sample(frac=1, random_state=seed)  
     return df_balanced
 
+
 def data_balanced():
     data = data_original()
     return _sample_balance_df(data)
+
+def data_time730(dataset = data_original(), drop_censored = False):
+    """ 
+    replaces feature "time" with 
+    - time730: counts the days over the 2 years time target 
+    - time_censored: counts the censored days up to the 2 years time target
+    """
+
+    if "time" not in df.columns:
+      print("Warning: the data does not have a feature 'time' to be replaced with time730.")
+      return df
+
+    # this shifted ReLU does the job:
+    df["time730"] = np.maximum(0, df['time'] - 730)
+
+    # censored patients: they quit the study before 2 years
+    if not drop_censored:
+      df["time_censored"] = np.maximum(0,730 - df['time'])
+
+    df= df.drop(columns = ['time'])
+    return df
 
 def xy_train(dataset=None, scale = True):
     if dataset is None:
