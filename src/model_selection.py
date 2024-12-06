@@ -5,13 +5,13 @@ import seaborn as sns
 
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import *
-from sklearn.model_selection import train_test_split, KFold, StratifiedKFold, cross_val_score
+from sklearn.model_selection import train_test_split, KFold, StratifiedKFold, cross_val_score, cross_validate
 
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.feature_selection import SelectKBest, RFE
 from sklearn.feature_selection import f_classif
 from sklearn.preprocessing import StandardScaler 
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, recall_score, make_scorer
 
 from sklearn.linear_model import LogisticRegression
 
@@ -34,6 +34,30 @@ def validation_accuracy_score(Xtrain,ytrain,model, n_splits = 5):
     # Calculate the mean of the MSE scores
     mean_accuracy = scores.mean() 
     return mean_accuracy
+
+def cv_mean_scores(Xtrain, ytrain, model = LogisticRegression(random_state=42), n_splits  = 5):
+    # Create the K-Fold cross-validator
+    cv = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=42)
+     
+    # Choose the scores to be computed
+    selectivity_score = make_scorer(recall_score, pos_label = 0)
+
+    my_scores= {
+        "accuracy": "accuracy",
+        "recall": recall_score,
+        "selectivity": selectivity_score
+    }
+
+    # Perform cross-validation measuring the scores
+    cv_results = cross_validate(
+        model, Xtrain, ytrain, cv=cv, n_jobs=-1, scoring= my_scores
+    )
+
+
+    # Calculate the mean of each score
+    mean_scores =  {score : cv_results[score].mean() for score in my_scores}
+    return mean_scores
+
 
 def rfe_kfold_cv(X, y, max_k=None, cv=5, verbose=False):
     if max_k is None:
