@@ -8,14 +8,14 @@ def onehot_trt(dataset, drop = True):
     # trt2: # zdd + zal
     # trt3 = 1-trt0-trt1-trt2: ddl only
     """
-    if "treat" not in dataset.columns:
+    if "trt" not in dataset.columns:
         print("Warning: the data does not have a feature 'treat' to be OneHotEncoded.")
         return dataset
 
     df = dataset.copy()
-    df['trt0'] = (df['treat']==0).astype(int)
-    df['trt1'] = (df['treat']==1).astype(int)
-    df['trt2'] = (df['treat']==2).astype(int)
+    df['trt0'] = (df['trt']==0).astype(int)
+    df['trt1'] = (df['trt']==1).astype(int)
+    df['trt2'] = (df['trt']==2).astype(int)
     if drop:
         df = df.drop(columns = ['trt', 'treat'])
     return df
