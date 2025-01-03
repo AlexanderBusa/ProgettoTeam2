@@ -26,6 +26,18 @@ def drop_str(dataset, drop = True):
         df = df.drop(columns = 'str2 z30 preanti'.split())
     return df
 
+def labratio(dataset, drop = False):
+    df = dataset.copy()
+    # interpretation:
+    ## ratio = 1 ----> no change
+    ## ratio = 2 ----> lab values were double at the beginning (worsening situation)
+    ## ratio = 0.5 ----> lab values were half at the beginning (improving situation)
+    ## ratio = 0 ----> lab values were critical at the beginning
+    # we are not doing cd420 / cd40 because sometimes cd40 is zero
+    df['cd4ratio'] = df['cd40'] / df['cd420']
+    df['cd8ratio'] = df['cd80'] / df['cd820']
+    return df 
+
 def time730(dataset, drop_censored = False):
     """ 
     replaces feature "time" with 
@@ -51,6 +63,7 @@ def time730(dataset, drop_censored = False):
 def engineer(
         dataset, 
         strat = None,
+        lab = None,
         time = "730",
         trt = "onehot"):
     """
@@ -66,5 +79,8 @@ def engineer(
 
     if trt == "onehot":
         df = onehot_trt(df)
+
+    if lab == "ratio":
+        df = labratio(df)
 
     return df 
