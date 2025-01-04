@@ -52,4 +52,3 @@ Dataset contains healthcare statistics and categorical information about patient
 - Medical history (hemophilia, history of IV drugs)
 - Treatment history (ZDV/non-ZDV treatment history)
 - Lab results (CD4/CD8 counts)
-- Ciao
