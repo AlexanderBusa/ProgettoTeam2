@@ -39,7 +39,7 @@ def labratio(dataset, drop = False):
     return df 
 
 def time730(dataset, drop_censored = False):
-    """ 
+    """
     replaces feature "time" with 
     - time730: counts the days over the 2 years time target 
     - time_censored: counts the censored days up to the 2 years time target
@@ -58,6 +58,43 @@ def time730(dataset, drop_censored = False):
         df["time_censored"] = np.maximum(0,730 - df['time'])
 
     df= df.drop(columns = ['time'])
+    
+    return df
+
+
+def timeofftrt(dataset, drop_offtrt = True, drop_time = True):
+    """ 
+    replaces feature "time" and "offtrt" with four variables 
+    - time2_off, time2_off, time2_off, time2_off
+    which depend on how the patient follows the treatment in the first 101 weeks
+    """
+
+    if "time" not in dataset.columns:
+        print("Warning: the data does not have a feature 'time' for timeofftrt feature engineering.")
+        return dataset
+    
+    if "offtrt" not in dataset.columns:
+        print("Warning: the data does not have a feature 'offtrt' for timeofftrt feature engineering.")
+        return dataset
+    
+    df = dataset.copy()
+
+    # indicator function of patients that have been treated for at least 101 weeks
+    mask_time2 = (df['time'] > 707).astype(int)
+
+    df['time2_off'] =  df['time'] * mask_time2 * df['offtrt']
+    df['time1_off'] =  df['time'] * (1-mask_time2) * df['offtrt']
+    df['time2_on'] =  df['time'] * mask_time2 * (1-df['offtrt'])
+    df['time1_on'] = (1-mask_time2) * (1-df['offtrt'])    # (*)
+
+    # (*) for patients that have been treated for less than 101 weeks and have not gone off-treatment, 
+    #     we know they are all infected, regardless of time, so there's no need to include the time dependence
+
+    if drop_offtrt:
+        df= df.drop(columns = ['time'])
+
+    if drop_time:
+        df= df.drop(columns = ['time'])
     return df
 
 def engineer(
@@ -76,6 +113,9 @@ def engineer(
 
     if time == "730":
         df = time730(df)
+
+    if time == "offtrt":
+        df = timeofftrt(df)
 
     if trt == "onehot":
         df = onehot_trt(df)
