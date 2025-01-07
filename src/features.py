@@ -91,7 +91,7 @@ def timeofftrt(dataset, drop_offtrt = True, drop_time = True):
     #     we know they are all infected, regardless of time, so there's no need to include the time dependence
 
     if drop_offtrt:
-        df= df.drop(columns = ['time'])
+        df= df.drop(columns = ['offtrt'])
 
     if drop_time:
         df= df.drop(columns = ['time'])
