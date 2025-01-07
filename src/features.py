@@ -80,12 +80,26 @@ def timeofftrt(dataset, drop_offtrt = True, drop_time = True):
     df = dataset.copy()
 
     # indicator function of patients that have been treated for at least 101 weeks
-    mask_time2 = (df['time'] > 707).astype(int)
+    mask_time2 = (df['time'] > 750).astype(int)
+    mask_time1 = (df['time'] <= 707).astype(int)
+
 
     df['time2_off'] =  df['time'] * mask_time2 * df['offtrt']
-    df['time1_off'] =  df['time'] * (1-mask_time2) * df['offtrt']
+    df['time1_off'] =  df['time'] * mask_time1 * df['offtrt']
     df['time2_on'] =  df['time'] * mask_time2 * (1-df['offtrt'])
-    df['time1_on'] = (1-mask_time2) * (1-df['offtrt'])    # (*)
+    df['time1_on'] = df['time'] * mask_time1 * (1-df['offtrt'])  
+    
+    df['bool_time2_off'] =  mask_time2 * df['offtrt']
+    #df['bool_time1_off'] = (1-mask_time2) * df['offtrt']
+    df['bool_time2_on'] =   mask_time2 * (1-df['offtrt'])
+    df['bool_time1_on'] = mask_time1 * (1-df['offtrt']) 
+
+    df['bool_timeexact_on'] = (1-mask_time2) *(1-mask_time1) * (1-df['offtrt']) 
+    df['bool_timeexact_off'] = (1-mask_time2) *(1-mask_time1)* df['offtrt']
+
+
+      
+      # (*)
 
     # (*) for patients that have been treated for less than 101 weeks and have not gone off-treatment, 
     #     we know they are all infected, regardless of time, so there's no need to include the time dependence
