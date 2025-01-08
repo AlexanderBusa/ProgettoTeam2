@@ -61,6 +61,19 @@ def time730(dataset, drop_censored = False):
     
     return df
 
+def offtrtinteraction(dataset):
+
+    df = dataset.copy()
+
+    for feature in "hemo karnof race cd80 age":
+        if feature in dataset.columns:
+            df[feature+"_off"] = df[feature]*df['offtrt']
+
+    for feature in "trt1 oprior strat gender homo":
+        if feature in dataset.columns:
+            df[feature+"_on"] = df[feature]*(1-df['offtrt'])
+
+    return df
 
 def timeofftrt(dataset, drop_offtrt = True, drop_time = True):
     """ 
@@ -116,7 +129,8 @@ def engineer(
         strat = None,
         lab = None,
         time = "730",
-        trt = "onehot"):
+        trt = "onehot",
+        offtrt = None):
     """
     Applies the necessary feature engineering steps
     """
@@ -136,5 +150,8 @@ def engineer(
 
     if lab == "ratio":
         df = labratio(df)
+
+    if offtrt == "interact":
+        df = offtrtinteraction(df)
 
     return df 
