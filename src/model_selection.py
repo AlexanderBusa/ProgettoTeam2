@@ -21,6 +21,26 @@ from tqdm import tqdm
 from . import datasets
 
 
+def cv_accuracy_recall(Xtrain, ytrain, model, modelname = "modelname", n_splits  = 5):
+    # Create the K-Fold cross-validator
+    cv = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=42)
+     
+    my_scores= {
+        "accuracy": "accuracy",
+        "recall": "recall",
+    }
+
+    # Perform cross-validation measuring the scores
+    cv_results = cross_validate(
+        model, Xtrain, ytrain, cv=cv, n_jobs=-1, scoring= my_scores
+    )
+
+
+    # Calculate the mean of each score
+    mean_scores =  {score : cv_results["test_"+score].mean() for score in my_scores}
+    mean_scores["model"] = modelname
+    return mean_scores
+
 
 def validation_accuracy_score(Xtrain,ytrain,model, n_splits = 5):
     # Create the K-Fold cross-validator
